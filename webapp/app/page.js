@@ -58,6 +58,16 @@ export default function Home() {
     return local.toJSON().slice(0, 10);
   });
 
+  function generateRandomArray() {
+    const length = Math.floor(Math.random() * 10) + 1; // Random length between 1 and 10
+    const result = [];
+    for (let i = 0; i < length; i++) {
+      const randomNumber = Math.floor(Math.random() * 100) + 1; // Random number between 1 and 100
+      result.push(randomNumber);
+    }
+    return result;
+  }
+
   return (
     <div className='w-screen h-screen flex'>
       <div className='h-full bg-white w-[275px]'>
@@ -159,7 +169,7 @@ export default function Home() {
                   datasets: [
                     {
                       label: '# of Votes',
-                      data: [12, 19, 3, 5, 2, 3],
+                      data: generateRandomArray(),
                       backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -187,7 +197,7 @@ export default function Home() {
                   datasets: [
                     {
                       label: '# of Votes',
-                      data: [2, 9, 3, 5, 2, 3],
+                      data: generateRandomArray(),
                       backgroundColor: 'rgba(255, 99, 132, 0.2)',
                       borderColor: 'rgba(255, 99, 132, 1)',
                       borderWidth: 1,
