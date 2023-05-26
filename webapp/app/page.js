@@ -52,8 +52,8 @@ export default function Home() {
 
   useEffect(() => {
     const monthNamesDutch = [
-      'januari', 'februari', 'maart', 'april', 'mei', 'juni',
-      'juli', 'augustus', 'september', 'oktober', 'november', 'december'
+      'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni',
+      'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'
     ];
 
     const start = new Date(startDate);
