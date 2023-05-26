@@ -35,13 +35,50 @@ ChartJS.register(
 
 export default function Home() {
   const [tab, setTab] = useState(0)
+  const [reload, setReload] = useState(0)
+
+  //maandnmr - 1 % 12
+  // maandindexes zijn: 
+  // startmaand - 1, {plus 1 % 12, totdat je bij} eindmaand - 1 komt
+
+  const [startDate, setStartDate] = useState()
+  const [endDate, setEndDate] = useState()
+  const [labels, setLabels] = useState(['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'])
+  // let labels = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
 
   useEffect(() => {
-    console.log("cahnged tab to: " + tab);
-  }, [tab])
+    console.log("changed tab to: " + tab);
+  }, [tab, reload])
+
+  useEffect(() => {
+    const monthNamesDutch = [
+      'januari', 'februari', 'maart', 'april', 'mei', 'juni',
+      'juli', 'augustus', 'september', 'oktober', 'november', 'december'
+    ];
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const months = [];
+
+    let currentDate = start;
+
+    while (currentDate <= end) {
+      const monthIndex = currentDate.getMonth();
+      const monthName = monthNamesDutch[monthIndex];
+      months.push(monthName);
+
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+
+    console.log(months);
+
+    if (months.length > 0) {
+      setLabels(old => months)
+    }
+  }, [startDate, endDate])
 
 
-  let labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
+
   let options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -89,11 +126,11 @@ export default function Home() {
           <div className="flex gap-6">
             <div className="flex items-center">
               <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg border-2 border-black">
-                <input className="w-[120px] focus:outline-none" type="date" />
+                <input onChange={(e) => setStartDate(e.target.value)} className="w-[120px] focus:outline-none" type="date" />
               </div>
               <p className="px-2">-</p>
               <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg border-2 border-black">
-                <input className="w-[120px] focus:outline-none" type="date" defaultValue={new Date().toDateInputValue()} />
+                <input onChange={(e) => setEndDate(e.target.value)} className="w-[120px] focus:outline-none" type="date" defaultValue={new Date().toDateInputValue()} />
               </div>
             </div>
 
