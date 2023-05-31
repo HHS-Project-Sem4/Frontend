@@ -18,6 +18,8 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar, Line, Pie, Radar } from 'react-chartjs-2';
+import InfoOverlay from "@/components/InfoOverlay";
+import DropDown from "@/components/DropDown";
 
 ChartJS.register(
   CategoryScale,
@@ -37,14 +39,12 @@ export default function Home() {
   const [tab, setTab] = useState(0)
   const [reload, setReload] = useState(0)
 
-  //maandnmr - 1 % 12
-  // maandindexes zijn: 
-  // startmaand - 1, {plus 1 % 12, totdat je bij} eindmaand - 1 komt
+  const [products, setProducts] = useState(["Alle Producten", "Shirt", "Sneakers", "Sportschoenen", "Wandelschoenen"])
+  const [selectedProduct, setSelectedProduct] = useState(products[0])
 
   const [startDate, setStartDate] = useState()
   const [endDate, setEndDate] = useState()
   const [labels, setLabels] = useState(['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'])
-  // let labels = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
 
   useEffect(() => {
     console.log("changed tab to: " + tab);
@@ -134,13 +134,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg border-2 border-black cursor-pointer">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16.5 5.25L9 1.5L1.5 5.25V12.75L9 16.5L16.5 12.75V5.25Z" stroke="black" stroke-width="1.5" stroke-linejoin="round" />
-                <path d="M1.5 5.25L9 9M9 9V16.5M9 9L16.5 5.25M12.75 3.375L5.25 7.125" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <p>Alle Producten</p>
-            </div>
+            <DropDown products={products} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} />
           </div>
 
           <div className="flex justify-between w-full">
@@ -172,7 +166,9 @@ export default function Home() {
 
           <div className="flex flex-col gap-10 h-full">
             <div className="flex justify-between w-full gap-10 h-1/2">
-              <div className="w-1/2 flex items-center justify-center bg-white h-full rounded-lg border-2 border-black graphContainer">
+              <div className="w-1/2 relative bg-white h-full rounded-lg border-2 border-black graphContainer">
+                <InfoOverlay text={"Hier geven we uitleg over de grafiek die je ziet."} />
+
                 <Bar options={options} data={{
                   labels,
                   datasets: [
@@ -184,7 +180,8 @@ export default function Home() {
                   ],
                 }} />
               </div>
-              <div className="w-1/2 flex items-center justify-center bg-white h-full rounded-lg border-2 border-black graphContainer">
+              <div className="w-1/2 relative bg-white h-full rounded-lg border-2 border-black graphContainer">
+                <InfoOverlay text={"Hier geven we uitleg over de grafiek die je ziet."} />
                 <Line options={options} data={{
                   labels,
                   datasets: [
@@ -200,7 +197,8 @@ export default function Home() {
               </div>
             </div>
             <div className="flex justify-between w-full gap-10 h-1/2">
-              <div className="w-1/2 flex items-center justify-center bg-white h-full rounded-lg border-2 border-black graphContainer">
+              <div className="w-1/2 relative bg-white h-full rounded-lg border-2 border-black graphContainer">
+                <InfoOverlay text={"Hier geven we uitleg over de grafiek die je ziet."} />
                 <Pie options={options} data={{
                   labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
                   datasets: [
@@ -228,7 +226,8 @@ export default function Home() {
                   ],
                 }} />
               </div>
-              <div className="w-1/2 flex items-center justify-center bg-white h-full rounded-lg border-2 border-black graphContainer">
+              <div className="w-1/2 relative bg-white h-full rounded-lg border-2 border-black graphContainer">
+                <InfoOverlay text={"Hier geven we uitleg over de grafiek die je ziet."} />
                 <Radar options={options} data={{
                   labels: ['Thing 1', 'Thing 2', 'Thing 3', 'Thing 4', 'Thing 5', 'Thing 6'],
                   datasets: [
