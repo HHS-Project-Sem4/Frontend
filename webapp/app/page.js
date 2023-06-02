@@ -3,7 +3,7 @@
 import SideBar from "../components/SideBar";
 import React, { useState, useEffect } from "react"
 
-import {
+import { 
   Chart as ChartJS,
   RadialLinearScale,
   CategoryScale,
