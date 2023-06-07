@@ -1,3 +1,4 @@
+
 describe('page visits', () => {
 
   it('default page verkoop', () => {
@@ -43,5 +44,34 @@ describe('page visits', () => {
     cy.contains('FILIALEN OVERZICHT')
   })
 
+
+})
+
+describe('test filter', () => {
+
+  beforeEach(() => {
+    cy.wait(500)
+    cy.contains('Alle Producten').click()
+  })
+
+  it('test shirt filter', () => {
+    cy.contains('Shirt').click()
+    cy.contains('Shirt')
+  })
+
+  it('test sneakers filter', () => {
+    cy.contains('Sneakers').click()
+    cy.contains('Sneakers')
+  })
+
+  it('test sportschoenen filter', () => {
+    cy.contains('Sportschoenen').click()
+    cy.contains('Sportschoenen')
+  })
+
+  it('test wandelschoenen filter', () => {
+    cy.contains('Wandelschoenen').click()
+    cy.contains('Wandelschoenen')
+  })
 
 })
