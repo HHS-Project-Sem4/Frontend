@@ -15,6 +15,9 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
-
+beforeEach(() => {
+    cy.log('preparation: visiting page')
+    cy.visit('http://localhost:3000')
+})
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
