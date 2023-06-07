@@ -3,7 +3,9 @@
 import SideBar from "../components/SideBar";
 import React, { useState, useEffect } from "react"
 
-import { 
+import textData from "@/data/textContent";
+
+import {
   Chart as ChartJS,
   RadialLinearScale,
   CategoryScale,
@@ -105,6 +107,10 @@ export default function Home() {
     return result;
   }
 
+  function getTabTitle() {
+    return ["VERKOOP", "KOSTEN", "WINST", "PRODUCTEN", "OPSLAG", "KLANTEN", "FILIALEN"][tab]
+  }
+
   return (
     <div className='w-screen h-screen flex'>
       <div className='h-full bg-white w-[275px]'>
@@ -167,27 +173,13 @@ export default function Home() {
           <div className="flex flex-col gap-10 h-full">
             <div className="flex justify-between w-full gap-10 h-1/2">
               <div className="w-1/2 relative bg-white h-full rounded-lg border-2 border-black graphContainer">
-                <InfoOverlay text={"Hier geven we uitleg over de grafiek die je ziet."} />
-
-                <Bar options={options} data={{
-                  labels,
-                  datasets: [
-                    {
-                      label: 'Dataset 1',
-                      data: labels.map(() => Math.floor(Math.random() * 1000)),
-                      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    }
-                  ],
-                }} />
-              </div>
-              <div className="w-1/2 relative bg-white h-full rounded-lg border-2 border-black graphContainer">
-                <InfoOverlay text={"Hier geven we uitleg over de grafiek die je ziet."} />
+                <InfoOverlay text={textData[getTabTitle()]?.chart1?.uitleg} />
                 <Line options={options} data={{
                   labels,
                   datasets: [
                     {
                       fill: true,
-                      label: 'Dataset 2',
+                      label: textData[getTabTitle()]?.chart1?.label,
                       data: labels.map(() => Math.floor(Math.random() * 1000)),
                       borderColor: 'rgb(53, 162, 235)',
                       backgroundColor: 'rgba(53, 162, 235, 0.5)',
@@ -195,15 +187,13 @@ export default function Home() {
                   ],
                 }} />
               </div>
-            </div>
-            <div className="flex justify-between w-full gap-10 h-1/2">
               <div className="w-1/2 relative bg-white h-full rounded-lg border-2 border-black graphContainer">
-                <InfoOverlay text={"Hier geven we uitleg over de grafiek die je ziet."} />
+                <InfoOverlay text={textData[getTabTitle()]?.chart2?.uitleg} />
                 <Pie options={options} data={{
                   labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
                   datasets: [
                     {
-                      label: '# of Votes',
+                      label: textData[getTabTitle()]?.chart2?.label,
                       data: generateRandomArray(),
                       backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
@@ -226,18 +216,34 @@ export default function Home() {
                   ],
                 }} />
               </div>
+            </div>
+            <div className="flex justify-between w-full gap-10 h-1/2">
               <div className="w-1/2 relative bg-white h-full rounded-lg border-2 border-black graphContainer">
-                <InfoOverlay text={"Hier geven we uitleg over de grafiek die je ziet."} />
-                <Radar options={options} data={{
-                  labels: ['Thing 1', 'Thing 2', 'Thing 3', 'Thing 4', 'Thing 5', 'Thing 6'],
+                <InfoOverlay text={textData[getTabTitle()]?.chart3?.uitleg} />
+
+                <Bar options={options} data={{
+                  labels,
                   datasets: [
                     {
-                      label: '# of Votes',
-                      data: generateRandomArray(),
-                      backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                      borderColor: 'rgba(255, 99, 132, 1)',
-                      borderWidth: 1,
-                    },
+                      label: textData[getTabTitle()]?.chart3?.label,
+                      data: labels.map(() => Math.floor(Math.random() * 1000)),
+                      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    }
+                  ],
+                }} />
+              </div>
+
+              <div className="w-1/2 relative bg-white h-full rounded-lg border-2 border-black graphContainer">
+                <InfoOverlay text={textData[getTabTitle()]?.chart4?.uitleg} />
+
+                <Bar options={options} data={{
+                  labels,
+                  datasets: [
+                    {
+                      label: textData[getTabTitle()]?.chart4?.label,
+                      data: labels.map(() => Math.floor(Math.random() * 1000)),
+                      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    }
                   ],
                 }} />
               </div>
