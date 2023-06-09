@@ -18,12 +18,12 @@ const SideBar = ({tab, setTab}) => {
                 <p className='mt-1 ml-1'>KOSTEN</p>
             </button>
 
-            <button onClick={() => setTab(2)} className={'flex items-center gap-2 font-bold text-xl bg-white w-full px-4 py-1.5 navButton ' + (tab == 2 ? 'selected' : '')}>
+            {/* <button onClick={() => setTab(2)} className={'flex items-center gap-2 font-bold text-xl bg-white w-full px-4 py-1.5 navButton ' + (tab == 2 ? 'selected' : '')}>
                 <svg width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M14.2905 8.96218L18.6185 1.48009L20.3844 2.50084L15.0458 11.7386L8.40077 7.91081L3.53179 16.332H20.415V18.3735H0V0H2.0415V14.8417L7.65562 5.10375L14.2905 8.96218Z" fill="black" />
                 </svg>
                 <p className='mt-1 ml-2'>WINST</p>
-            </button>
+            </button> */}
 
             {/* <button onClick={() => setTab(3)} className={'flex items-center gap-2 font-bold text-xl bg-white w-full px-4 py-1.5 navButton ' + (tab == 3 ? 'selected' : '')}>
                 <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
