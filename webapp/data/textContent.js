@@ -71,7 +71,7 @@ const textData = {
     },
     "KLANTEN": {
         "chart1": {
-            "uitleg": "Totale aantal klanten per maand",
+            "uitleg": "Totale aantal klanten per land",
             "label": "Totaal aantal klanten"
         },
         "chart2": {

@@ -1,14 +1,38 @@
 import React from 'react'
 
-let baseURL = "https://api-sem4.azurewebsites.net"
-const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, endDate, setChartData1, setChartData2, setChartData3, setChartData4, setVerkoop, setKosten, setOmzet, setBrutoWinstmarge, setWinst }) => {
+//Prod url
+// let baseURL = "https://api-sem4.azurewebsites.net"
+
+//Dev url
+let baseURL = "https://localhost:7225"
+
+
+const useDataFetcher = async ({
+                                  setLoading,
+                                  tab,
+                                  selectedProduct,
+                                  startDate,
+                                  endDate,
+                                  setChartData1,
+                                  setChartData2,
+                                  setChartData3,
+                                  setChartData4,
+                                  setVerkoop,
+                                  setKosten,
+                                  setOmzet,
+                                  setBrutoWinstmarge,
+                                  setWinst
+                              }) => {
 
     let productData = await fetch(`${baseURL}/Sales/date/${startDate}X${endDate}`).then(async res => await res.json())
     let vooraadData = await fetch(`${baseURL}/Voorraad`).then(async res => await res.json())
     let productenData = await fetch(`${baseURL}/Product`).then(async res => await res.json())
 
+    // country + int that contains amount of customers located in a country
+    let countryCustomerData = await fetch(`${baseURL}/Customer/ByCountry`).then(async res => await res.json())
+
     const transformedObject = productenData.reduce((result, item) => {
-        result[item.productId] = { costs: item.productionCost };
+        result[item.productId] = {costs: item.productionCost};
         return result;
     }, {});
 
@@ -17,6 +41,7 @@ const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, end
     productData.map(p => {
         kosten += p.orderQuantity * transformedObject[p.productId].costs
     })
+
     setKosten(kosten)
 
     let groupedProducts = productData.reduce((acc, product) => {
@@ -70,10 +95,10 @@ const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, end
 
     const labels = Object.keys(sortedGroupedProducts).map((key) => formatYearMonth(key));
 
-    setChartData1({ labels: ["DATA VERWERKEN"], data: [0] })
-    setChartData2({ labels: ["DATA VERWERKEN"], data: [0] })
-    setChartData3({ labels: ["DATA VERWERKEN"], data: [0] })
-    setChartData4({ labels: ["DATA VOORSPELLEN"], data: [0] })
+    setChartData1({labels: ["DATA VERWERKEN"], data: [0]})
+    setChartData2({labels: ["DATA VERWERKEN"], data: [0]})
+    setChartData3({labels: ["DATA VERWERKEN"], data: [0]})
+    setChartData4({labels: ["DATA VOORSPELLEN"], data: [0]})
 
     if (tab == 0) {
         console.log(tab);
@@ -92,14 +117,14 @@ const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, end
             return count
         });
 
-        let endData = { labels, data: d };
+        let endData = {labels, data: d};
         console.log(endData);
 
         setChartData1(endData)
         //CHART 1 END - VERKOCHTE PRODUCTEN
 
         //CHART 2 WIP - GROEIPERCENTAGE
-        setChartData2({ labels: ["GEEN DATA"], data: [1] })
+        setChartData2({labels: ["GEEN DATA"], data: [1]})
         //CHART 2 WIP - GROEIPERCENTAGE
 
         //CHART 3 START - GROEIPERCENTAGE
@@ -113,7 +138,7 @@ const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, end
             return percentage.toFixed(2);
         });
 
-        setChartData3({ labels, data: growthPercentages })
+        setChartData3({labels, data: growthPercentages})
         //CHART 3 END - GROEIPERCENTAGE
 
         //CHART 4 START - UNIT COSTS PREDICTION
@@ -122,30 +147,31 @@ const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, end
         await fetch(`https://outdoorfusionpython.azurewebsites.net/predict/orderquantity`, {
             method: 'POST',
             cache: "force-cache",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ Country: '', Product: '', Category: '', SubCategory: '' })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({Country: '', Product: '', Category: '', SubCategory: ''})
         }).then(response => response.json()).then(data => {
             setLoading(false)
             console.log(data);
-            tab == 0 && setChartData4({ labels: generateUpcomingMonths(endDate), data: Object.values(data) })
+            tab == 0 && setChartData4({labels: generateUpcomingMonths(endDate), data: Object.values(data)})
         })
         //CHART 4 END - UNIT COSTS PREDICTION
 
 
     } else if (tab == 1) {
         console.log(groupedProducts);
+
         //CHART 1 START - KOSTEN TOTAAL
         const finalArray = Object.entries(groupedProducts).map(([key, products]) => {
             const sum = products.reduce((acc, product) => acc + product.orderQuantity * product.unitPrice, 0);
             return sum;
         });
 
-        setChartData1({ labels, data: finalArray })
+        setChartData1({labels, data: finalArray})
         //CHART 1 END - KOSTEN TOTAAL
 
-        //CHART 2 WIP - KOSTEN TOTAAL
-        setChartData2({ labels: ["GEEN DATA"], data: [1] })
 
+        //CHART 2 WIP - KOSTEN TOTAAL
+        setChartData2({labels: ["GEEN DATA"], data: [1]})
 
 
         //CHART 3 START - KOSTEN GROEIPERCENTAGE
@@ -157,9 +183,10 @@ const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, end
             const previousValue = finalArray[index - 1];
             const percentage = ((value - previousValue) / previousValue) * 100;
             return percentage.toFixed(2);
+
         });
 
-        setChartData3({ labels, data: growthPercentages })
+        setChartData3({labels, data: growthPercentages})
 
 
         //CHART 4 START - UNIT COSTS PREDICTION
@@ -167,40 +194,55 @@ const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, end
         await fetch(`https://outdoorfusionpython.azurewebsites.net/predict/unitprice`, {
             method: 'POST',
             cache: "force-cache",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ Country: '', Product: '', Category: '', SubCategory: '' })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({Country: '', Product: '', Category: '', SubCategory: ''})
         }).then(response => response.json()).then(data => {
             console.log(data);
             setLoading(false)
-            tab == 1 && setChartData4({ labels: generateUpcomingMonths(endDate), data: Object.values(data) })
+
+            tab == 1 && setChartData4({labels: generateUpcomingMonths(endDate), data: Object.values(data)})
         })
         //CHART 4 END - UNIT COSTS PREDICTION
-
-
 
 
     } else if (tab == 2) {
 
 
     } else if (tab == 4) {
+
         let totalProducts = 0
         const filteredData = vooraadData.filter(item => item.quantity !== 0);
         let labels = []
         let quanitity = []
         setLoading(false)
+
         filteredData.map(async productInfo => {
             // console.log(productInfo);
-            await fetch(`https://localhost:7225/Product/${productInfo.id}`).then(res => res.json()).then(data => {
+            await fetch(`${baseURL}/Product/${productInfo.id}`).then(res => res.json()).then(data => {
                 // console.log(data);
                 labels = [...labels, data.name]
                 quanitity = [...quanitity, data.storageQuantity]
                 totalProducts += data.storageQuantity
                 tab == 4 && setChartData1({labels: [0, `${endDate}`], data: [0, totalProducts]})
 
-                tab == 4 && setChartData4({ labels: labels, data: quanitity })
+                tab == 4 && setChartData4({labels: labels, data: quanitity})
             })
         })
+
     } else if (tab == 5) {
+
+        // -------- Pie Chart 2, shows the countries with a customerQuantity => average in a piechart
+
+        // Calculate the average of the quantities
+        const sum = countryCustomerData.reduce((accumulator, obj) => accumulator + obj.quantity, 0);
+        const average = sum / countryCustomerData.length;
+
+        // Filter the array to include countries with quantities greater than or equal to the median
+        const countryLabels = countryCustomerData
+            .filter(obj => obj.quantity >= average)
+            .map(obj => obj.country);
+
+        setChartData2({labels: countryLabels, data: countryCustomerData.filter(obj => obj.quantity >= average).map(obj => obj.quantity)})
 
     }
 
@@ -209,7 +251,7 @@ const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, end
 function formatYearMonth(dateString) {
     const [year, month] = dateString.split('-');
     const date = new Date(year, month - 1, 1);
-    const monthName = date.toLocaleString('default', { month: 'short' });
+    const monthName = date.toLocaleString('default', {month: 'short'});
     return `${year} ${monthName}`;
 }
 
@@ -219,13 +261,12 @@ function generateUpcomingMonths(startDate) {
 
     for (let i = 1; i < 13; i++) {
         const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1);
-        const monthName = nextMonth.toLocaleString('default', { year: 'numeric', month: 'short' });
+        const monthName = nextMonth.toLocaleString('default', {year: 'numeric', month: 'short'});
         months.push(monthName);
     }
 
     return months;
 }
-
 
 
 export default useDataFetcher
