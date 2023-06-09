@@ -12,8 +12,8 @@ const textData = {
             "label": "Groeipercentage(%)"
         },
         "chart4": {
-            "uitleg": "Voorspelling: Groeipercentage verkochte producten verkocht per maand.",
-            "label": "Voorspelling: Groeipercentage(%)"
+            "uitleg": "Voorspelling: Order Quantity voor de volgende 12 maanden",
+            "label": "Voorspelling: Order Quantity"
         },
     },
     "KOSTEN": {
@@ -29,8 +29,8 @@ const textData = {
             "label": "Groeipercentage(%)"
         },
         "chart4": {
-            "uitleg": "Voorspelling: Groeipercentage verkochte producten verkocht per maand.",
-            "label": "Voorspelling: Groeipercentage(%)"
+            "uitleg": "Voorspelling: Unit Costs voor de volgende 12 maanden",
+            "label": "Voorspelling: Unit Costs"
         },
     },
     "WINST": {
@@ -65,8 +65,8 @@ const textData = {
             "label": "Groeipercentage(%)"
         },
         "chart4": {
-            "uitleg": "Voorspelling: Groeipercentage voor de producten in het opslag",
-            "label": "Voorspelling: Groeipercentage(%)"
+            "uitleg": "Opslag Per Product",
+            "label": "Totale opslag per product"
         },
     },
     "KLANTEN": {
