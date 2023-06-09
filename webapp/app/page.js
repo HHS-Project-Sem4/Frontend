@@ -3,6 +3,8 @@
 import SideBar from "../components/SideBar";
 import React, { useState, useEffect } from "react"
 
+import textData from "@/data/textContent";
+
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -18,6 +20,9 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar, Line, Pie, Radar } from 'react-chartjs-2';
+import InfoOverlay from "@/components/InfoOverlay";
+import DropDown from "@/components/DropDown";
+import useDataFetcher from "@/data/useDataFetcher";
 
 ChartJS.register(
   CategoryScale,
@@ -37,18 +42,31 @@ export default function Home() {
   const [tab, setTab] = useState(0)
   const [reload, setReload] = useState(0)
 
-  //maandnmr - 1 % 12
-  // maandindexes zijn: 
-  // startmaand - 1, {plus 1 % 12, totdat je bij} eindmaand - 1 komt
+  const [products, setProducts] = useState(["Alle Producten", "Shirt", "Sneakers", "Sportschoenen", "Wandelschoenen"])
+  const [selectedProduct, setSelectedProduct] = useState(products[0])
+  const [loading, setLoading] = useState(true)
 
-  const [startDate, setStartDate] = useState()
-  const [endDate, setEndDate] = useState()
+  const [startDate, setStartDate] = useState('2015-08-01');
+
+  const [endDate, setEndDate] = useState('2017-01-01')
   const [labels, setLabels] = useState(['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'])
-  // let labels = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December']
+
+  const [chartData1, setChartData1] = useState()
+  const [chartData2, setChartData2] = useState()
+  const [chartData3, setChartData3] = useState()
+  const [chartData4, setChartData4] = useState()
+
+  const [verkoop, setVerkoop] = useState(0)
+  const [kosten, setKosten] = useState(0)
+  const [omzet, setOmzet] = useState(0)
+  const [brutoWinstmarge, setBrutoWinstmarge] = useState(0)
+  const [winst, setWinst] = useState(0)
+
 
   useEffect(() => {
     console.log("changed tab to: " + tab);
-  }, [tab, reload])
+    useDataFetcher({ setLoading, tab, selectedProduct, startDate, endDate, setChartData1, setChartData2, setChartData3, setChartData4, setVerkoop, setKosten, setOmzet, setBrutoWinstmarge, setWinst })
+  }, [tab, reload, startDate, endDate])
 
   useEffect(() => {
     const monthNamesDutch = [
@@ -70,8 +88,6 @@ export default function Home() {
       currentDate.setMonth(currentDate.getMonth() + 1);
     }
 
-    console.log(months);
-
     if (months.length > 0) {
       setLabels(old => months)
     }
@@ -89,11 +105,14 @@ export default function Home() {
     },
   }
 
-  Date.prototype.toDateInputValue = (function () {
-    var local = new Date(this);
-    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
-    return local.toJSON().slice(0, 10);
-  });
+  function shortenNumber(number) {
+    if (!number) return 0
+    const suffixes = ['', 'k', 'M', 'B', 'T'];
+    const suffixIndex = Math.floor(Math.log10(number) / 3);
+    const shortNumber = (number / Math.pow(1000, suffixIndex)).toFixed(1);
+    return `${shortNumber}${suffixes[suffixIndex]}`;
+  }
+
 
   function generateRandomArray() {
     const length = Math.floor(Math.random() * 10) + 1; // Random length between 1 and 10
@@ -103,6 +122,10 @@ export default function Home() {
       result.push(randomNumber);
     }
     return result;
+  }
+
+  function getTabTitle() {
+    return ["VERKOOP", "KOSTEN", "WINST", "PRODUCTEN", "OPSLAG", "KLANTEN", "FILIALEN"][tab]
   }
 
   return (
@@ -126,87 +149,70 @@ export default function Home() {
           <div className="flex gap-6">
             <div className="flex items-center">
               <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg border-2 border-black">
-                <input onChange={(e) => setStartDate(e.target.value)} className="w-[120px] focus:outline-none" type="date" />
+                <input onChange={(e) => setStartDate(e.target.value)} value={startDate} className="w-[120px] focus:outline-none" type="date" />
               </div>
               <p className="px-2">-</p>
               <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg border-2 border-black">
-                <input onChange={(e) => setEndDate(e.target.value)} className="w-[120px] focus:outline-none" type="date" defaultValue={new Date().toDateInputValue()} />
+                <input onChange={(e) => setEndDate(e.target.value)} value={endDate} className="w-[120px] focus:outline-none" type="date" />
               </div>
             </div>
 
-            <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-lg border-2 border-black cursor-pointer">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16.5 5.25L9 1.5L1.5 5.25V12.75L9 16.5L16.5 12.75V5.25Z" stroke="black" stroke-width="1.5" stroke-linejoin="round" />
-                <path d="M1.5 5.25L9 9M9 9V16.5M9 9L16.5 5.25M12.75 3.375L5.25 7.125" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <p>Alle Producten</p>
-            </div>
+            <DropDown products={products} selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} />
           </div>
 
           <div className="flex justify-between w-full">
             <div className="flex flex-col justify-center items-center bg-white rounded-lg border-2 border-black w-2/12 py-4">
-              <p className="text-3xl font-bold">8929</p>
+              <p className="text-3xl font-bold">{shortenNumber(verkoop)}</p>
               <p className="font-bold text-sm">VERKOCHT</p>
             </div>
 
             <div className="flex flex-col justify-center items-center bg-white rounded-lg border-2 border-black w-2/12 py-4">
-              <p className="text-3xl font-bold text-green-400">7,23%</p>
-              <p className="font-bold text-sm">GROEIPERCENTAGE</p>
-            </div>
-
-            <div className="flex flex-col justify-center items-center bg-white rounded-lg border-2 border-black w-2/12 py-4">
-              <p className="text-3xl font-bold">€312392,39</p>
+              <p className="text-3xl font-bold">€{shortenNumber(omzet)}</p>
               <p className="font-bold text-sm">OMZET</p>
             </div>
 
             <div className="flex flex-col justify-center items-center bg-white rounded-lg border-2 border-black w-2/12 py-4">
-              <p className="text-3xl font-bold">39,97%</p>
+              <p className="text-3xl font-bold">€{shortenNumber(kosten)}</p>
+              <p className="font-bold text-sm">KOSTEN</p>
+            </div>
+
+
+            <div className="flex flex-col justify-center items-center bg-white rounded-lg border-2 border-black w-2/12 py-4">
+              <p className="text-3xl font-bold">{brutoWinstmarge}%</p>
               <p className="font-bold text-sm">BRUTO WINSTMARGE</p>
             </div>
 
             <div className="flex flex-col justify-center items-center bg-white rounded-lg border-2 border-black w-2/12 py-4">
-              <p className="text-3xl font-bold text-green-400">€124859,20</p>
+              <p className={"text-3xl font-bold " + (winst > 0 ? "text-green-400" : "text-red-400")}>€{shortenNumber(winst)}</p>
               <p className="font-bold text-sm">WINST</p>
             </div>
           </div>
 
           <div className="flex flex-col gap-10 h-full">
             <div className="flex justify-between w-full gap-10 h-1/2">
-              <div className="w-1/2 flex items-center justify-center bg-white h-full rounded-lg border-2 border-black graphContainer">
-                <Bar options={options} data={{
-                  labels,
-                  datasets: [
-                    {
-                      label: 'Dataset 1',
-                      data: labels.map(() => Math.floor(Math.random() * 1000)),
-                      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    }
-                  ],
-                }} />
-              </div>
-              <div className="w-1/2 flex items-center justify-center bg-white h-full rounded-lg border-2 border-black graphContainer">
+              {chartData1?.data.length != 1 && <div className={"relative bg-white h-full rounded-lg border-2 border-black graphContainer " + (chartData2?.data.length == 1 ? "w-full" : " w-1/2")}>
+                <InfoOverlay text={textData[getTabTitle()]?.chart1?.uitleg} />
                 <Line options={options} data={{
-                  labels,
+                  labels: chartData1?.labels,
                   datasets: [
                     {
                       fill: true,
-                      label: 'Dataset 2',
-                      data: labels.map(() => Math.floor(Math.random() * 1000)),
+                      label: textData[getTabTitle()]?.chart1?.label,
+                      data: chartData1?.data,
                       borderColor: 'rgb(53, 162, 235)',
                       backgroundColor: 'rgba(53, 162, 235, 0.5)',
                     },
                   ],
                 }} />
-              </div>
-            </div>
-            <div className="flex justify-between w-full gap-10 h-1/2">
-              <div className="w-1/2 flex items-center justify-center bg-white h-full rounded-lg border-2 border-black graphContainer">
+              </div>}
+              {chartData2?.data.length != 1 && <div className={"relative bg-white h-full rounded-lg border-2 border-black graphContainer " + (chartData1?.data.length == 1 ? "w-full" : " w-1/2")}>
+                <InfoOverlay text={textData[getTabTitle()]?.chart2?.uitleg} />
                 <Pie options={options} data={{
-                  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                  labels: chartData2?.labels,
                   datasets: [
                     {
-                      label: '# of Votes',
-                      data: generateRandomArray(),
+                      label: textData[getTabTitle()]?.chart2?.label,
+                      data: chartData2?.data,
                       backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -227,20 +233,43 @@ export default function Home() {
                     },
                   ],
                 }} />
-              </div>
-              <div className="w-1/2 flex items-center justify-center bg-white h-full rounded-lg border-2 border-black graphContainer">
-                <Radar options={options} data={{
-                  labels: ['Thing 1', 'Thing 2', 'Thing 3', 'Thing 4', 'Thing 5', 'Thing 6'],
+              </div>}
+            </div>
+            <div className="flex justify-between w-full gap-10 h-1/2">
+              {chartData3?.data.length != 1 && <div className={"relative bg-white h-full rounded-lg border-2 border-black graphContainer " + (chartData4?.data == [0] ? "w-full" : "w-1/2")}>
+                <InfoOverlay text={textData[getTabTitle()]?.chart3?.uitleg} />
+
+                <Line options={options} data={{
+                  labels: chartData3?.labels,
                   datasets: [
                     {
-                      label: '# of Votes',
-                      data: generateRandomArray(),
-                      backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                      borderColor: 'rgba(255, 99, 132, 1)',
-                      borderWidth: 1,
-                    },
+                      label: textData[getTabTitle()]?.chart3?.label,
+                      data: chartData3?.data,
+                      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    }
                   ],
                 }} />
+              </div>}
+
+              <div className={"relative flex items-center justify-center bg-white h-full rounded-lg border-2 border-black graphContainer " + (chartData3?.data.length == 1 ? "w-full" : " w-1/2")}>
+                <InfoOverlay text={textData[getTabTitle()]?.chart4?.uitleg} />
+
+                {loading && <div className="flex flex-col items-center justify-center absolute w-1/3 h-1/3 rounded-md z-50">
+                  <img className="rotateBOIII" src="/loadingIcon.png" />
+                  <p className="font-bold mt-2">Data aan het voorspellen</p>
+                </div>}
+
+                <Bar options={options} data={{
+                  labels: chartData4?.labels,
+                  datasets: [
+                    {
+                      label: textData[getTabTitle()]?.chart4?.label,
+                      data: chartData4?.data,
+                      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    }
+                  ],
+                }}>
+                </Bar>
               </div>
             </div>
           </div>
