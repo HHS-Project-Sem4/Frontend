@@ -1,6 +1,6 @@
 import React from 'react'
 
-let baseURL = "https://localhost:7225"
+let baseURL = "https://api-sem4.azurewebsites.net"
 const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, endDate, setChartData1, setChartData2, setChartData3, setChartData4, setVerkoop, setKosten, setOmzet, setBrutoWinstmarge, setWinst }) => {
 
     let productData = await fetch(`${baseURL}/Sales/date/${startDate}X${endDate}`).then(async res => await res.json())
@@ -201,8 +201,6 @@ const useDataFetcher = async ({ setLoading, tab, selectedProduct, startDate, end
             })
         })
     } else if (tab == 5) {
-
-    } else if (tab == 6) {
 
     }
 
